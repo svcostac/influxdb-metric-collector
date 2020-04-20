@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: collector-simulation
+spec:
+  parallelism: 2
+  backoffLimit: 5
+  activeDeadlineSeconds: 36000
+  template:
+    spec:
+      containers:
+      - name: collector-simulation
+        image: gcr.io/my-project10135/metrics-collector
+        env:
+        - name: SERVER
+          value: http://35.225.125.0:8086
+        - name: SENDERTYPE
+          value: influxdb
+        - name: CONF_FILE
+          value: /default.conf
+        - name: MAXCLIENTS
+          value: "10"
+        - name: PODNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name 
+        resources:
+          requests:
+            cpu: "200m"
+      restartPolicy: Never
